@@ -1,6 +1,6 @@
 {
-  "short_name": "React App",
-  "name": "Create React App Sample",
+  "short_name": "Розрахунок пульсацій в свердловині",
+  "name": "Програма розрахунку пульсацій в свердловині",
   "icons": [
     {
       "src": "favicon.ico",
