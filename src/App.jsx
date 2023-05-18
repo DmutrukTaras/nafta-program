@@ -15,7 +15,7 @@ function App() {
     <div className="App">
       <ThemeProvider theme={darkTheme}>
         <CssBaseline />
-        <main>Програма розрахунку ...</main>
+        <main>Програма розрахунку пульсацій в свердловині</main>
         <Program />
     </ThemeProvider>
     </div>

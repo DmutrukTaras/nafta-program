@@ -4,6 +4,8 @@ import { TextField, Box, Divider, Button } from '@mui/material';
 import Chart from './components/Chart';
 import MyTable from './components/Table';
 
+import { commonProps, functionS, frequency } from './utils'
+
 const Program = () => {
     const [X1, setX1] = useState(0.9);
     const [RO1, setRO1] = useState(1100);
@@ -52,21 +54,10 @@ const Program = () => {
             let counter = 0;
 
             while (T <= maxT) {
-                let S = 0;
-                for (let N = 1; N <= 10; N++) {
-                    const AA = PI * N * C / (2 * L);
-                    const BB = PI * N * NU / (2 * L);
-                    const K = Math.sin(AA * Math.sqrt(C - BB) * T) + Math.cos(AA * Math.sqrt(C - BB) * T);
-                    const SN = (((1 - (-1) ** N) / (N ** 2)) * Math.cos((PI * N * X) / L) * Math.exp(-(Math.pow(PI * N, 2) * NU * T) / (L * L * 2)) * K);
-                    S += SN;
-                }
-            
+                const S = functionS(C, NU, L, T, X)
                 const U = (2 * L / (PI ** 2)) * S;
             
-                if (T === 0) {
-                    var U1 = U;
-                }
-            
+                if (T === 0) var U1 = U;
                 const normalizedU = U / U1;
             
                 result.push({ t: T.toFixed(2), U: normalizedU.toFixed(3) });
@@ -80,8 +71,6 @@ const Program = () => {
                     arrayT.push(arr[index+1]);
                 }
             })
-            console.log('result', result);
-            console.log('arrayT', arrayT);
 
             const period = arrayT.length > 0 ? ((+arrayT[arrayT.length - 1].t - +arrayT[0].t) / arrayT.length) : 0.00001;
             const frequency = 1/(period+0.00001);
@@ -97,12 +86,7 @@ const Program = () => {
     };
 
     const calculateL = () => {        
-        const MU = 0.35;
-        const PI = Math.PI;
-    
-        const R0 = X1 * RO1 + (1 - X1) * RO2;
-        const C = 1 / Math.sqrt((X1 / (RO1 * C1 ** 2) + (1 - X1) / (RO2 * C2 ** 2))) * R0;
-        const NU = MU / R0;
+        const { C, NU } = commonProps(X1, RO1, RO2, C1, C2);
         const step = Math.round(L/20);
 
         let X = 0;     
@@ -116,25 +100,13 @@ const Program = () => {
             let counter = 0;
 
             while (T <= maxT) {
-                let S = 0;
-                for (let N = 1; N <= 10; N++) {
-                    const AA = PI * N * C / (2 * valueL);
-                    const BB = PI * N * NU / (2 * valueL);
-                    const K = Math.sin(AA * Math.sqrt(C - BB) * T) + Math.cos(AA * Math.sqrt(C - BB) * T);
-                    const SN = (((1 - (-1) ** N) / (N ** 2)) * Math.cos((PI * N * X) / valueL) * Math.exp(-(Math.pow(PI * N, 2) * NU * T) / (valueL * valueL * 2)) * K);
-                    S += SN;
-                }
+                const S = functionS(C, NU, valueL, T, X)
+                const U = (2 * valueL / (Math.PI ** 2)) * S;
             
-                const U = (2 * valueL / (PI ** 2)) * S;
-            
-                if (T === 0) {
-                    var U1 = U;
-                }
-            
+                if (T === 0) var U1 = U;
                 const normalizedU = U / U1;
             
                 result.push({ t: T.toFixed(2), U: normalizedU.toFixed(3) });
-            
                 T += 0.01;
             }
 
@@ -147,6 +119,7 @@ const Program = () => {
 
             const period = arrayT.length > 0 ? ((+arrayT[arrayT.length - 1].t - +arrayT[0].t) / arrayT.length) : 0.00001;
             const frequency = 1/(period+0.00001);
+
             if (frequency < 1000) resultF.push({ T: frequency.toFixed(4), L: valueL.toFixed(1) });
 
             const E = (E1*X1 +E2*(1-X1))*1000000
@@ -159,40 +132,21 @@ const Program = () => {
     };
 
     const calculate = () => {        
-        const MU = 0.35;
-        const PI = Math.PI;
-    
-        const R0 = X1 * RO1 + (1 - X1) * RO2;
-        const C = 1 / Math.sqrt((X1 / (RO1 * C1 ** 2) + (1 - X1) / (RO2 * C2 ** 2))) * R0;
-        const NU = MU / R0;
-    
+        const { C, NU } = commonProps(X1, RO1, RO2, C1, C2);
+
         let X = 0;
         let T = 0;
-        
-    
         let result = [];
 
     
         while (T <= maxT) {
-            let S = 0;
-            for (let N = 1; N <= 10; N++) {
-                const AA = PI * N * C / (2 * L);
-                const BB = PI * N * NU / (2 * L);
-                const K = Math.sin(AA * Math.sqrt(C - BB) * T) + Math.cos(AA * Math.sqrt(C - BB) * T);
-                const SN = (((1 - (-1) ** N) / (N ** 2)) * Math.cos((PI * N * X) / L) * Math.exp(-(Math.pow(PI * N, 2) * NU * T) / (L * L * 2)) * K);
-                S += SN;
-            }
-        
-            const U = (2 * L / (PI ** 2)) * S;
-        
-            if (T === 0) {
-                var U1 = U;
-            }
-        
+            const S = functionS(C, NU, L, T, X)
+            const U = (2 * L / (Math.PI ** 2)) * S;
+
+            if (T === 0) var U1 = U;
             const normalizedU = U / U1;
         
             result.push({ t: T.toFixed(2), U: normalizedU.toFixed(3) });
-        
             T += 0.01;
         }
     
@@ -279,10 +233,10 @@ const Program = () => {
                     '& > :not(style)': { m: 1 },
                 }}
             >
-                <Divider textAlign="left">Перша речовина</Divider>
+                <Divider textAlign="left">Середовище: <b>Буровий розчин</b></Divider>
                 <TextField
                     label="X1"
-                    title='Введіть частку першої речовини'
+                    title='Введіть концентрацію буровового розчину'
                     value={X1}
                     type="number"
                     onChange={(e) => {
@@ -292,50 +246,50 @@ const Program = () => {
                 />
                 <TextField
                     label="RO1"
-                    title='Введіть густину першої речовини'
+                    title='Введіть густину буровового розчину'
                     value={RO1}
                     type="number"
                     onChange={(e) => setRO1(e.target.value)}
                 />
                 <TextField
                     label="C1"
-                    title='Введіть С першої речовини'
+                    title='Введіть швидкість звуку в бурововому розчині'
                     value={C1}
                     type="number"
                     onChange={(e) => setC1(e.target.value)}
                 />
                 <TextField
                     label="E1"
-                    title='Введіть E першої речовини'
+                    title='Введіть модуль пружності буровового розчину'
                     value={E1}
                     type="number"
                     onChange={(e) => setE1(e.target.value)}
                 />
-                <Divider textAlign="left">Друга речовина</Divider>
+                <Divider textAlign="left">Середовище: <b>Гірська порода</b></Divider>
                 <TextField
                     label="X2"
-                    title='Частка другої речовини'
+                    title='Концентрація гірської породи'
                     value={X2}
                     type="number"
                     disabled
                 />
                 <TextField
                     label="RO2"
-                    title='Введіть густину другої речовини'
+                    title='Введіть густину гірської породи'
                     value={RO2}
                     type="number"
                     onChange={(e) => setRO2(e.target.value)}
                 />
                 <TextField
                     label="C2"
-                    title='Введіть С другої речовини'
+                    title='Введіть швидкість звуку в гірській породі'
                     value={C2}
                     type="number"
                     onChange={(e) => setC2(e.target.value)}
                 />
                 <TextField
                     label="E2"
-                    title='Введіть E2 першої речовини'
+                    title='Введіть модуль пружності гірської породи'
                     value={E2}
                     type="number"
                     onChange={(e) => setE2(e.target.value)}
@@ -343,28 +297,28 @@ const Program = () => {
                 <Divider textAlign="left">Параметри</Divider>
                 <TextField
                     label="L"
-                    title='Введіть максимальну Довжину'
+                    title='Введіть відстань'
                     value={L}
                     type="number"
                     onChange={(e) => setL(e.target.value)}
                 />
                 <TextField
                     label="max T"
-                    title='Введіть максимальний час'
+                    title='Введіть час'
                     value={maxT}
                     type="number"
                     onChange={(e) => setMaxT(e.target.value)}
                 />
                 <TextField
                     label="F0"
-                    title='Введіть F0'
+                    title='Введіть силу'
                     value={F0}
                     type="number"
                     onChange={(e) => setF0(e.target.value)}
                 />
                 <TextField
                     label="S"
-                    title='Введіть площу перерізу'
+                    title='Введіть площу кільцевого перерізу'
                     value={S}
                     type="number"
                     onChange={(e) => setS(e.target.value)}
