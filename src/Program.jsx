@@ -4,7 +4,7 @@ import { TextField, Box, Divider, Button } from '@mui/material';
 import Chart from './components/Chart';
 import MyTable from './components/Table';
 
-import { commonProps, functionS, frequency } from './utils'
+import { commonProps, functionS } from './utils'
 
 const Program = () => {
     const [X1, setX1] = useState(0.9);

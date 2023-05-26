@@ -16,18 +16,18 @@ export function commonProps(X1, RO1, RO2, C1, C2) {
 export function functionS(C, NU, L, T, X) {
     let S = 0;
     for (let N = 1; N <= 10; N++) {
-        const AA = Math.PI * N * C / 2 / L;
+        const AA = Math.PI * N / 2 / L;
         const BB = Math.PI * N * NU / 2 / L;
-        const K = Math.sin(AA * Math.sqrt(Math.abs(BB - C)) * T) + Math.cos(AA * Math.sqrt(Math.abs(BB - C)) * T);
+        const K = Math.sin(AA * Math.sqrt(C * C - BB * BB) * T) + Math.cos(AA * Math.sqrt(C * C - BB * BB) * T);
         const SN = (((1 - (-1) ** N) / N / N) * Math.cos((Math.PI * N * X) / L) * Math.exp(-(Math.pow(Math.PI * N, 2) * NU * T) / (L * L * 2)) * K);
         S += SN;
     }
     return S
 }
 
-export function frequency(arrayT) {
-    const period = arrayT.length > 0 ? ((+arrayT[arrayT.length - 1].t - +arrayT[0].t) / arrayT.length) : 0.00001;
-    const freq = 1/(period+0.00001);
+// export function frequency(arrayT) {
+//     const period = arrayT.length > 0 ? ((+arrayT[arrayT.length - 1].t - +arrayT[0].t) / arrayT.length) : 0.00001;
+//     const freq = 1/(period+0.00001);
 
-    return freq
-}
+//     return freq
+// }
