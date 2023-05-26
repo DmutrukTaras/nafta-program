@@ -42,11 +42,14 @@ const Program = () => {
         let resultF = [];
         let resultA = [];
         
-        for (let valueX = 0.8; valueX < 1; valueX+=0.01) {
+        for (let valueX = 0.87; valueX < 1; valueX+=0.01) {
                 
-            const R0 = valueX * RO1 + (1 - valueX) * RO2;
-            const C = 1 / Math.sqrt((valueX / (RO1 * C1 ** 2) + (1 - valueX) / (RO2 * C2 ** 2))) * R0;
+            const R0 = (valueX * RO1) + ((1 - valueX) * RO2);
+            const C = 1 / Math.sqrt((valueX / (RO1 * C1 ** 2) + (1 - valueX) / (RO2 * C2 ** 2)) * R0);
             const NU = MU / R0;
+
+            console.log('R0', R0);
+            console.log('C', C);
 
             let T = 0;
             let result = [];
@@ -66,15 +69,19 @@ const Program = () => {
             }
 
             result.forEach((value, index, arr) => {
-                if(counter < 4 && arr[index+1] && arr[index+2] && ((value.U - arr[index+1].U) > 0) && ((arr[index+1].U - arr[index+2].U) < 0)){
+                if(counter < 3 && arr[index+1] && arr[index+2] && ((value.U - arr[index+1].U) > 0) && ((arr[index+1].U - arr[index+2].U) < 0)){
                     counter++;
                     arrayT.push(arr[index+1]);
                 }
             })
 
+            console.log('result', result);
+
             const period = arrayT.length > 0 ? ((+arrayT[arrayT.length - 1].t - +arrayT[0].t) / arrayT.length) : 0.00001;
             const frequency = 1/(period+0.00001);
             if (frequency < 1000) resultF.push({ T: frequency.toFixed(4), L: valueX.toFixed(2) });
+
+            console.log('arrayT', arrayT);
 
             const E = (E1*valueX +E2*(1-valueX))*1000000
             const amplitude = (F0*C) / (2 * frequency * E * S * Math.cos(frequency * L / C));
