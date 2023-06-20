@@ -17,8 +17,7 @@ const Program = () => {
     const [E2, setE2] = useState(10000);
     const [L, setL] = useState(2000);
     const [maxT, setMaxT] = useState(1);
-    const [F0, setF0] = useState(1000);
-    const [S, setS] = useState(0.018);
+    const [P, setP] = useState(20000000);
     
     const [showBlock, setShowBlock] = useState({});
     
@@ -48,9 +47,6 @@ const Program = () => {
             const C = 1 / Math.sqrt((valueX / (RO1 * C1 ** 2) + (1 - valueX) / (RO2 * C2 ** 2)) * R0);
             const NU = MU / R0;
 
-            console.log('R0', R0);
-            console.log('C', C);
-
             let T = 0;
             let result = [];
             let arrayT = [];
@@ -63,7 +59,7 @@ const Program = () => {
                 if (T === 0) var U1 = U;
                 const normalizedU = U / U1;
             
-                result.push({ t: T.toFixed(2), U: normalizedU.toFixed(3) });
+                result.push({ t: T.toFixed(2), U: normalizedU.toFixed(4) });
             
                 T += 0.01;
             }
@@ -75,17 +71,13 @@ const Program = () => {
                 }
             })
 
-            console.log('result', result);
-
             const period = arrayT.length > 0 ? ((+arrayT[arrayT.length - 1].t - +arrayT[0].t) / arrayT.length) : 0.00001;
             const frequency = 1/(period+0.00001);
-            if (frequency < 1000) resultF.push({ T: frequency.toFixed(4), L: valueX.toFixed(2) });
-
-            console.log('arrayT', arrayT);
+            if (frequency < 1000) resultF.push({ T: frequency.toFixed(5), L: valueX.toFixed(3) });
 
             const E = (E1*valueX +E2*(1-valueX))*1000000
-            const amplitude = (F0*C) / (2 * frequency * E * S * Math.cos(frequency * L / C));
-            if (frequency < 1000) resultA.push({ A: amplitude.toFixed(4), L: valueX.toFixed(2) });
+            const amplitude = (P*C) / (2 * frequency * E * Math.cos(frequency * L / C));
+            if (frequency < 1000) resultA.push({ A: amplitude.toFixed(5), L: valueX.toFixed(3) });
         }
         setOutputL(resultF);
         setOutputA(resultA);
@@ -113,7 +105,7 @@ const Program = () => {
                 if (T === 0) var U1 = U;
                 const normalizedU = U / U1;
             
-                result.push({ t: T.toFixed(2), U: normalizedU.toFixed(3) });
+                result.push({ t: T.toFixed(2), U: normalizedU.toFixed(4) });
                 T += 0.01;
             }
 
@@ -127,11 +119,11 @@ const Program = () => {
             const period = arrayT.length > 0 ? ((+arrayT[arrayT.length - 1].t - +arrayT[0].t) / arrayT.length) : 0.00001;
             const frequency = 1/(period+0.00001);
 
-            if (frequency < 1000) resultF.push({ T: frequency.toFixed(4), L: valueL.toFixed(1) });
+            if (frequency < 1000) resultF.push({ T: frequency.toFixed(5), L: valueL.toFixed(2) });
 
             const E = (E1*X1 +E2*(1-X1))*1000000
-            const amplitude = (F0*C) / (2 * frequency * E * S * Math.cos(frequency * valueL / C));
-            if (frequency < 1000) resultA.push({ A: amplitude.toFixed(4), L: valueL.toFixed(1) });
+            const amplitude = (P*C) / (2 * frequency * E * Math.cos(frequency * valueL / C));
+            if (frequency < 1000) resultA.push({ A: amplitude.toFixed(5), L: valueL.toFixed(2) });
         }
         setOutputL(resultF);
         setOutputA(resultA);
@@ -153,7 +145,7 @@ const Program = () => {
             if (T === 0) var U1 = U;
             const normalizedU = U / U1;
         
-            result.push({ t: T.toFixed(2), U: normalizedU.toFixed(3) });
+            result.push({ t: T.toFixed(2), U: normalizedU.toFixed(4) });
             T += 0.01;
         }
     
@@ -317,19 +309,13 @@ const Program = () => {
                     onChange={(e) => setMaxT(e.target.value)}
                 />
                 <TextField
-                    label="F0"
-                    title='Введіть силу'
-                    value={F0}
+                    label="P"
+                    title='Введіть тиск'
+                    value={P}
                     type="number"
-                    onChange={(e) => setF0(e.target.value)}
+                    onChange={(e) => setP(e.target.value)}
                 />
-                <TextField
-                    label="S"
-                    title='Введіть площу кільцевого перерізу'
-                    value={S}
-                    type="number"
-                    onChange={(e) => setS(e.target.value)}
-                />
+
             </Box>
             <Button className='Button-calculate' variant="contained" onClick={calculate}>
                 Розрахувати U
